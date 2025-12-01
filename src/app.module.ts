@@ -1,52 +1,24 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { User } from './entities/user.entity';
-import { Category } from './entities/category.entity';
-import { Questionnaire } from './entities/questionnaire.entity';
-import { Question } from './entities/question.entity';
-import { Option } from './entities/option.entity';
-import { TestResult } from './entities/test-result.entity';
-import { Answer } from './entities/answer.entity';
-import { AuthModule } from './auth/auth.module';
-import { CategoryModule } from './category/category.module';
-import { QuestionnaireModule } from './questionnaire/questionnaire.module';
-import { QuestionModule } from './question/question.module';
-import { TestResultModule } from './test-result/test-result.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { CategoryModule } from './modules/category/category.module';
+import { QuestionnaireModule } from './modules/questionnaire/questionnaire.module';
+import { QuestionModule } from './modules/question/question.module';
+import { TestResultModule } from './modules/test-result/test-result.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT || '3306'),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-      entities: [
-        User,
-        Category,
-        Questionnaire,
-        Question,
-        Option,
-        TestResult,
-        Answer,
-      ],
-      synchronize: true, // Only use in development
-      logging: true,
-    }),
-    TypeOrmModule.forFeature([
-      User,
-      Category,
-      Questionnaire,
-      Question,
-      Option,
-      TestResult,
-      Answer,
-    ]),
+    MongooseModule.forRoot(
+      process.env.MONGODB_URI || 'mongodb://localhost:27017/qa-system',
+      {
+        retryAttempts: 5,
+        retryDelay: 3000,
+      },
+    ),
     AuthModule,
     CategoryModule,
     QuestionnaireModule,
