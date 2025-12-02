@@ -8,6 +8,8 @@ import { CategoryModule } from './modules/category/category.module';
 import { QuestionnaireModule } from './modules/questionnaire/questionnaire.module';
 import { QuestionModule } from './modules/question/question.module';
 import { TestResultModule } from './modules/test-result/test-result.module';
+import { UserModule } from './modules/user/user.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { TestResultModule } from './modules/test-result/test-result.module';
     QuestionnaireModule,
     QuestionModule,
     TestResultModule,
+    UserModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

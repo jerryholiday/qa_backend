@@ -17,6 +17,8 @@ const category_module_1 = require("./modules/category/category.module");
 const questionnaire_module_1 = require("./modules/questionnaire/questionnaire.module");
 const question_module_1 = require("./modules/question/question.module");
 const test_result_module_1 = require("./modules/test-result/test-result.module");
+const user_module_1 = require("./modules/user/user.module");
+const dashboard_module_1 = require("./modules/dashboard/dashboard.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -33,6 +35,8 @@ exports.AppModule = AppModule = __decorate([
             questionnaire_module_1.QuestionnaireModule,
             question_module_1.QuestionModule,
             test_result_module_1.TestResultModule,
+            user_module_1.UserModule,
+            dashboard_module_1.DashboardModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
