@@ -3,6 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Question, QuestionDocument } from '../../schemas/question.schema';
 import { Option, OptionDocument } from '../../schemas/option.schema';
+import {
+  Questionnaire,
+  QuestionnaireDocument,
+} from '../../schemas/questionnaire.schema';
 
 @Injectable()
 export class QuestionService {
@@ -11,6 +15,8 @@ export class QuestionService {
     private readonly questionModel: Model<QuestionDocument>,
     @InjectModel(Option.name)
     private readonly optionModel: Model<OptionDocument>,
+    @InjectModel(Questionnaire.name)
+    private readonly questionnaireModel: Model<QuestionnaireDocument>,
   ) {}
 
   async findAll(): Promise<QuestionDocument[]> {
@@ -55,6 +61,16 @@ export class QuestionService {
       questionnaire: questionnaireId,
     });
     const savedQuestion = await createdQuestion.save();
+
+    // Add the question ID to the questionnaire's questions array
+    await this.questionnaireModel
+      .findByIdAndUpdate(
+        questionnaireId,
+        { $push: { questions: savedQuestion._id } },
+        { new: true },
+      )
+      .exec();
+
     return savedQuestion;
   }
 
@@ -95,6 +111,16 @@ export class QuestionService {
       question: questionId,
     });
     const savedOption = await createdOption.save();
+
+    // Add the option ID to the question's options array
+    await this.questionModel
+      .findByIdAndUpdate(
+        questionId,
+        { $push: { options: savedOption._id } },
+        { new: true },
+      )
+      .exec();
+
     return savedOption;
   }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   Questionnaire,
   QuestionnaireDocument,
@@ -28,7 +28,9 @@ export class QuestionnaireService {
     return questionnaires;
   }
 
-  async findOne(id: string | ObjectId): Promise<QuestionnaireDocument | null> {
+  async findOne(
+    id: string | Types.ObjectId,
+  ): Promise<QuestionnaireDocument | null> {
     const questionnaire = await this.questionnaireModel
       .findById(id)
       .populate('category')
@@ -41,7 +43,7 @@ export class QuestionnaireService {
     title: string,
     description: string,
     coverImage: string,
-    categoryId: string | ObjectId,
+    categoryId: string | Types.ObjectId,
     totalQuestions: number,
   ): Promise<QuestionnaireDocument> {
     const createdQuestionnaire = new this.questionnaireModel({
@@ -56,11 +58,11 @@ export class QuestionnaireService {
   }
 
   async update(
-    id: string | ObjectId,
+    id: string | Types.ObjectId,
     title?: string,
     description?: string,
     coverImage?: string,
-    categoryId?: string | ObjectId,
+    categoryId?: string | Types.ObjectId,
     totalQuestions?: number,
     isActive?: boolean,
   ): Promise<QuestionnaireDocument | null> {
@@ -68,7 +70,13 @@ export class QuestionnaireService {
     if (title) updateData.title = title;
     if (description !== undefined) updateData.description = description;
     if (coverImage) updateData.coverImage = coverImage;
-    // if (categoryId) updateData.category = categoryId;
+    if (categoryId) {
+      // 确保categoryId是ObjectId类型
+      updateData.category =
+        typeof categoryId === 'string'
+          ? new Types.ObjectId(categoryId)
+          : categoryId;
+    }
     if (totalQuestions !== undefined)
       updateData.totalQuestions = totalQuestions;
     if (isActive !== undefined) updateData.isActive = isActive;
@@ -79,8 +87,13 @@ export class QuestionnaireService {
     return updatedQuestionnaire;
   }
 
-  async remove(id: string | ObjectId): Promise<boolean> {
-    const result = await this.questionnaireModel.findByIdAndDelete(id).exec();
+  async remove(id: string | Types.ObjectId): Promise<boolean> {
+    // 使用findOneAndDelete处理非ObjectId格式的id
+    const result = await this.questionnaireModel
+      .findOneAndDelete({
+        _id: id,
+      })
+      .exec();
     return result !== null;
   }
 

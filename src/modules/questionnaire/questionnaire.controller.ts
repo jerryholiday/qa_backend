@@ -10,6 +10,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { Types } from 'mongoose';
 import { QuestionnaireService } from './questionnaire.service';
 import {
   ApiTags,
@@ -76,7 +77,7 @@ export class QuestionnaireController {
       title,
       description,
       coverImage,
-      categoryId,
+      new Types.ObjectId(categoryId), // 将字符串转换为 ObjectId
       totalQuestions,
     );
     return res.status(HttpStatus.CREATED).json(questionnaire);
@@ -110,7 +111,7 @@ export class QuestionnaireController {
       title,
       description,
       coverImage,
-      categoryId,
+      categoryId ? new Types.ObjectId(categoryId) : undefined, // 将字符串转换为 ObjectId
       totalQuestions,
       isActive,
     );
